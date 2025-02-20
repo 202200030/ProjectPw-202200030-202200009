@@ -1,6 +1,7 @@
-/*202200030 202200030@estudantes.ips.pt
-  202200009 202200009@estudantes.ips.pt
+/* 202200030 202200030@estudantes.ips.pt
+   202200009 202200009@estudantes.ips.pt
 */
+
 :root {
     --root-primary-color: #003;
     --root-background-color: #eee;
@@ -9,103 +10,100 @@
     --root-border-width: 1px;
     --root-border-style: solid;
     --root-border-radius: var(--root-half-space);
-}
-
-body {
+  }
+  
+  body {
     margin: var(--root-space);
     color: var(--root-primary-color);
     background-color: var(--root-background-color);
     font-family: Verdana, Helvetica, sans-serif;
     text-align: center;
-}
-
-h1 {
+  }
+  
+  h1 {
     margin: var(--root-space) 0;
     font-size: 2rem;
     text-align: center;
     color: var(--root-primary-color);
-}
-
-nav {
+  }
+  
+  nav {
     margin-bottom: var(--root-space);
-}
-
-.link {
+  }
+  
+  /* Estilização para os botões do menu */
+  nav button {
     display: inline-block;
     padding: var(--root-half-space) var(--root-space);
     margin: var(--root-half-space);
     color: var(--root-background-color);
     background-color: var(--root-primary-color);
+    border: none;
     border-radius: var(--root-border-radius);
     cursor: pointer;
     text-align: center;
-    text-decoration: none;
     font-weight: bold;
     font-size: 1rem;
-    width: auto;
     min-width: 120px;
-}
-
-table {
+  }
+  
+  table {
     border: var(--root-border-width) var(--root-border-style) var(--root-primary-color);
     border-collapse: collapse;
     margin: var(--root-space) auto;
     width: 80%;
-}
-
-td,
-th {
+  }
+  
+  td,
+  th {
     padding: var(--root-half-space);
     border: var(--root-border-width) var(--root-border-style) var(--root-primary-color);
     text-align: left;
     font-size: 1rem;
-}
-
-th {
+  }
+  
+  th {
     background-color: var(--root-primary-color);
     color: white;
     text-transform: uppercase;
-}
-
-td {
+  }
+  
+  td {
     background-color: var(--root-background-color);
-}
-
-
-form {
+  }
+  
+  form {
     margin-top: var(--root-space);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--root-half-space);
-}
-
-form h3 {
+  }
+  
+  form h3 {
     font-size: 1.5rem;
     margin-bottom: var(--root-half-space);
     color: var(--root-primary-color);
-}
-
-form label {
-    display: block;           
+  }
+  
+  form label {
+    display: block;
     font-size: 1rem;
     font-weight: bold;
     margin-top: var(--root-half-space);
     color: var(--root-primary-color);
-    /* margin-right: var(--root-half-space); REMOVA se não quiser que o label fique na mesma linha */
   }
-
-form input {
+  
+  form input {
     padding: var(--root-half-space);
     border: var(--root-border-width) var(--root-border-style) var(--root-primary-color);
     border-radius: var(--root-border-radius);
     font-size: 1rem;
     width: 60%;
     max-width: 300px;
-}
-
-
-form button {
+  }
+  
+  form button {
     padding: var(--root-half-space) var(--root-space);
     margin-top: var(--root-half-space);
     font-size: 1rem;
@@ -114,60 +112,61 @@ form button {
     border-radius: var(--root-border-radius);
     cursor: pointer;
     text-transform: uppercase;
-}
-
-form button:first-child {
+  }
+  
+  form button:first-child {
     background-color: var(--root-primary-color);
     color: var(--root-background-color);
-}
-
-form button:last-child {
+  }
+  
+  form button:last-child {
     background-color: #ccc;
     color: var(--root-primary-color);
-}
-
-tr.selected {
-    color: #000; 
-    font-weight: bold; 
-}
-
-
-@media (max-width: 768px) {
+  }
+  
+  tr.selected {
+    color: #000;
+    font-weight: bold;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
     body {
-        margin: var(--root-half-space);
+      margin: var(--root-half-space);
     }
-
+  
     h1 {
-        font-size: 1.5rem;
+      font-size: 1.5rem;
     }
-
-    .link {
-        display: block;
-        width: 100%;
-        margin: var(--root-half-space) auto;
+  
+    nav button {
+      display: block;
+      width: 100%;
+      margin: var(--root-half-space) auto;
     }
-
+  
     table {
-        width: 100%;
-        font-size: 0.9rem;
+      width: 100%;
+      font-size: 0.9rem;
     }
-
+  
     form input {
-        width: 80%;
+      width: 80%;
     }
-}
-
-@media (max-width: 480px) {
+  }
+  
+  @media (max-width: 480px) {
     h1 {
-        font-size: 1.2rem;
+      font-size: 1.2rem;
     }
-
+  
     td,
     th {
-        font-size: 0.8rem;
+      font-size: 0.8rem;
     }
-
+  
     form input {
-        width: 100%;
+      width: 100%;
     }
-}
+  }
+  

@@ -2,11 +2,10 @@
 
 /**
  * Classe que representa um Evento.
- * O ID será definido pelo servidor.
  */
 let Event = function Event(type = "", description = "", date = "") {
-  this.id = 0;
-  this.type = type; // string com a descrição do tipo
+  this.id = 0;      // Definido pelo servidor
+  this.type = type; // Nome do tipo (convertido localmente)
   this.description = description;
   this.date = date;
 };
@@ -18,21 +17,17 @@ Event.propertyLabels = {
   date: "Data"
 };
 
-/**
- * Classe para gerenciar os Eventos e sua interface.
- */
 function MenuEvent() {
   this.events = [];
   this.selectedEvent = null;
 }
 
-/**
- * Cria a tabela HTML para os eventos.
- */
+/** Desenha a tabela de eventos */
 MenuEvent.prototype.toTable = function () {
   let table = document.createElement("table");
   let thead = document.createElement("thead");
   let headerRow = document.createElement("tr");
+
   for (let prop in Event.propertyLabels) {
     let th = document.createElement("th");
     th.textContent = Event.propertyLabels[prop];
@@ -40,40 +35,37 @@ MenuEvent.prototype.toTable = function () {
   }
   thead.appendChild(headerRow);
   table.appendChild(thead);
+
   let tbody = document.createElement("tbody");
-  if (this.events.length > 0) {
-    this.events.forEach((evt) => {
-      let row = document.createElement("tr");
-      row.addEventListener("click", () => {
-        tbody.querySelectorAll("tr").forEach((r) => r.classList.remove("selected"));
-        row.classList.add("selected");
-        this.selectedEvent = evt;
-      });
-      for (let prop in Event.propertyLabels) {
-        let cell = document.createElement("td");
-        cell.textContent = evt[prop];
-        row.appendChild(cell);
-      }
-      tbody.appendChild(row);
+  this.events.forEach((evt) => {
+    let row = document.createElement("tr");
+    row.addEventListener("click", () => {
+      tbody.querySelectorAll("tr").forEach((r) => r.classList.remove("selected"));
+      row.classList.add("selected");
+      this.selectedEvent = evt;
     });
-  }
+    for (let prop in Event.propertyLabels) {
+      let cell = document.createElement("td");
+      cell.textContent = evt[prop];
+      row.appendChild(cell);
+    }
+    tbody.appendChild(row);
+  });
   table.appendChild(tbody);
   return table;
 };
 
-/**
- * Carrega os eventos do servidor.
- */
+/** Carrega os eventos do servidor e converte typeId para typeName */
 MenuEvent.prototype.loadFromServer = async function () {
   try {
     let response = await fetch("http://localhost:3000/events");
     if (!response.ok) throw new Error("Erro ao carregar eventos");
     let data = await response.json();
+    // data contém objetos com { id, typeId, description, date }
     this.events = data.map((obj) => {
-      // Observe que no servidor "events" retorna { id, typeId, description, date }
-      // Se o servidor também retornar "type" como string, ótimo;
-      // Caso contrário, precisamos converter "typeId" -> "type" consultando eventTypes
-      let evt = new Event(obj.type, obj.description, obj.date);
+      let found = MenuEventType.default.eventTypes.find(et => et.id === obj.typeId);
+      let typeName = found ? found.description : "(Tipo desconhecido)";
+      let evt = new Event(typeName, obj.description, obj.date);
       evt.id = obj.id;
       return evt;
     });
@@ -84,89 +76,67 @@ MenuEvent.prototype.loadFromServer = async function () {
   }
 };
 
-/**
- * Cria o formulário para criar/editar um Evento.
- */
+/** Cria o formulário para criar/editar um evento */
 MenuEvent.prototype.createForm = function (evt = null) {
   let formContainer = document.createElement("div");
-  let formTitle = document.createElement("h3");
-  formTitle.textContent = evt ? "Editar Evento" : "Criar Evento";
-  formContainer.appendChild(formTitle);
+  let title = document.createElement("h3");
+  title.textContent = evt ? "Editar Evento" : "Criar Evento";
+  formContainer.appendChild(title);
 
-  // Seletor de Tipo (usa os tipos carregados no MenuEventType)
   let typeLabel = document.createElement("label");
   typeLabel.textContent = "Tipo: ";
-  let typeInput = document.createElement("select");
-  typeInput.id = "eventType";
-
-  // Utiliza os tipos disponíveis
-  let eventTypes = MenuEventType.default.eventTypes;
-  if (eventTypes.length > 0) {
-    eventTypes.forEach((et) => {
-      let option = document.createElement("option");
-      option.value = et.description; 
-      option.textContent = et.description;
-      typeInput.appendChild(option);
-    });
-  } else {
-    let noOption = document.createElement("option");
-    noOption.textContent = "Nenhum tipo disponível";
-    noOption.disabled = true;
-    noOption.selected = true;
-    typeInput.appendChild(noOption);
+  let typeSelect = document.createElement("select");
+  MenuEventType.default.eventTypes.forEach((et) => {
+    let opt = document.createElement("option");
+    opt.value = et.id; // Guardar o ID
+    opt.textContent = et.description;
+    typeSelect.appendChild(opt);
+  });
+  if (evt) {
+    let found = MenuEventType.default.eventTypes.find(et => et.description === evt.type);
+    if (found) typeSelect.value = found.id;
   }
-  if (evt) typeInput.value = evt.type;
 
-  // Campo Descrição
-  let descriptionLabel = document.createElement("label");
-  descriptionLabel.textContent = "Descrição: ";
-  let descriptionInput = document.createElement("input");
-  descriptionInput.type = "text";
-  descriptionInput.id = "eventDescription";
-  if (evt) descriptionInput.value = evt.description;
+  let descLabel = document.createElement("label");
+  descLabel.textContent = "Descrição: ";
+  let descInput = document.createElement("input");
+  descInput.type = "text";
+  if (evt) descInput.value = evt.description;
 
-  // Campo Data
   let dateLabel = document.createElement("label");
   dateLabel.textContent = "Data: ";
   let dateInput = document.createElement("input");
   dateInput.type = "date";
-  dateInput.id = "eventDate";
   if (evt) dateInput.value = evt.date;
 
   formContainer.appendChild(typeLabel);
-  formContainer.appendChild(typeInput);
-  formContainer.appendChild(descriptionLabel);
-  formContainer.appendChild(descriptionInput);
+  formContainer.appendChild(typeSelect);
+  formContainer.appendChild(descLabel);
+  formContainer.appendChild(descInput);
   formContainer.appendChild(dateLabel);
   formContainer.appendChild(dateInput);
 
-  let buttonContainer = document.createElement("div");
-  let saveButton = document.createElement("button");
-  saveButton.textContent = "Gravar";
-  saveButton.addEventListener("click", async () => {
-    let type = typeInput.value;
-    let description = descriptionInput.value.trim();
+  let btnContainer = document.createElement("div");
+  let saveBtn = document.createElement("button");
+  saveBtn.textContent = "Gravar";
+  saveBtn.addEventListener("click", async () => {
+    let typeId = Number(typeSelect.value);
+    let description = descInput.value.trim();
     let date = dateInput.value;
     if (!description || !date) {
       alert("Preencha todos os campos");
       return;
     }
-    // Precisamos enviar typeId (número), então:
-    let typeId = getTypeIdByDescription(type);
-    if (!typeId) {
-      alert("Tipo inválido");
-      return;
-    }
     if (evt) {
-      // Atualização (PUT)
       try {
-        let response = await fetch(`http://localhost:3000/events/${evt.id}`, {
+        let resp = await fetch(`http://localhost:3000/events/${evt.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ typeId, description, date })
         });
-        if (!response.ok) throw new Error("Erro ao atualizar evento");
-        evt.type = type;
+        if (!resp.ok) throw new Error("Erro ao atualizar evento");
+        let found = MenuEventType.default.eventTypes.find(et => et.id === typeId);
+        evt.type = found ? found.description : "(desconhecido)";
         evt.description = description;
         evt.date = date;
         this.show();
@@ -175,16 +145,16 @@ MenuEvent.prototype.createForm = function (evt = null) {
         alert("Erro ao atualizar evento");
       }
     } else {
-      // Criação (POST)
       try {
-        let response = await fetch("http://localhost:3000/events", {
+        let resp = await fetch("http://localhost:3000/events", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ typeId, description, date })
         });
-        if (!response.ok) throw new Error("Erro ao criar evento");
-        let created = await response.json();
-        let newEvt = new Event(type, description, date);
+        if (!resp.ok) throw new Error("Erro ao criar evento");
+        let created = await resp.json();
+        let found = MenuEventType.default.eventTypes.find(et => et.id === typeId);
+        let newEvt = new Event(found ? found.description : "(desconhecido)", description, date);
         newEvt.id = created.id;
         this.events.push(newEvt);
         this.show();
@@ -195,26 +165,16 @@ MenuEvent.prototype.createForm = function (evt = null) {
     }
   });
 
-  let cancelButton = document.createElement("button");
-  cancelButton.textContent = "Cancelar";
-  cancelButton.addEventListener("click", () => {
+  let cancelBtn = document.createElement("button");
+  cancelBtn.textContent = "Cancelar";
+  cancelBtn.addEventListener("click", () => {
     this.show();
   });
-
-  buttonContainer.appendChild(saveButton);
-  buttonContainer.appendChild(cancelButton);
-  formContainer.appendChild(buttonContainer);
+  btnContainer.appendChild(saveBtn);
+  btnContainer.appendChild(cancelBtn);
+  formContainer.appendChild(btnContainer);
   return formContainer;
 };
-
-/**
- * Função auxiliar que retorna o typeId dado uma descrição,
- * pesquisando em MenuEventType.default.eventTypes.
- */
-function getTypeIdByDescription(description) {
-  let et = MenuEventType.default.eventTypes.find((t) => t.description === description);
-  return et ? et.id : null;
-}
 
 MenuEvent.prototype.showForm = function (evt = null) {
   let container = document.getElementById("events");
@@ -225,43 +185,42 @@ MenuEvent.prototype.showForm = function (evt = null) {
 MenuEvent.prototype.show = async function () {
   let container = document.getElementById("events");
   while (container.firstChild) container.removeChild(container.firstChild);
+  await MenuEventType.default.loadFromServer(); // Para ter os tipos atualizados
   await this.loadFromServer();
   container.appendChild(this.toTable());
 
-  let buttonContainer = document.createElement("div");
-  let createButton = document.createElement("button");
-  createButton.textContent = "Criar";
-  createButton.addEventListener("click", () => {
+  let btnContainer = document.createElement("div");
+  let createBtn = document.createElement("button");
+  createBtn.textContent = "Criar";
+  createBtn.addEventListener("click", () => {
     this.showForm();
   });
-
-  let editButton = document.createElement("button");
-  editButton.textContent = "Editar";
-  editButton.addEventListener("click", () => {
+  let editBtn = document.createElement("button");
+  editBtn.textContent = "Editar";
+  editBtn.addEventListener("click", () => {
     if (this.selectedEvent) {
       this.showForm(this.selectedEvent);
     } else {
       alert("Selecione um evento");
     }
   });
-
-  let deleteButton = document.createElement("button");
-  deleteButton.textContent = "Apagar";
-  deleteButton.addEventListener("click", async () => {
+  let deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Apagar";
+  deleteBtn.addEventListener("click", async () => {
     if (!this.selectedEvent) {
       alert("Selecione um evento");
       return;
     }
     try {
-      let response = await fetch(`http://localhost:3000/events/${this.selectedEvent.id}`, {
+      let resp = await fetch(`http://localhost:3000/events/${this.selectedEvent.id}`, {
         method: "DELETE"
       });
-      if (!response.ok) {
-        let errData = await response.json();
+      if (!resp.ok) {
+        let errData = await resp.json();
         alert(errData.message || "Erro ao apagar evento");
         return;
       }
-      this.events = this.events.filter((e) => e.id !== this.selectedEvent.id);
+      this.events = this.events.filter(e => e.id !== this.selectedEvent.id);
       this.selectedEvent = null;
       this.show();
     } catch (err) {
@@ -270,10 +229,10 @@ MenuEvent.prototype.show = async function () {
     }
   });
 
-  buttonContainer.appendChild(createButton);
-  buttonContainer.appendChild(editButton);
-  buttonContainer.appendChild(deleteButton);
-  container.appendChild(buttonContainer);
+  btnContainer.appendChild(createBtn);
+  btnContainer.appendChild(editBtn);
+  btnContainer.appendChild(deleteBtn);
+  container.appendChild(btnContainer);
 };
 
 MenuEvent.default = new MenuEvent();

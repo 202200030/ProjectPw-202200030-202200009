@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>ESTSBike - Clube de Ciclismo</title>
   <link rel="stylesheet" href="./styles/styles.css" />
   <script src="./scripts/menuEventTypes.js" defer></script>
@@ -12,42 +11,37 @@
 <body>
   <h1>ESTSBike - Clube de Ciclismo</h1>
   <nav>
-    <a id="showMembers" class="link" href="#">Membros</a>
-    <a id="showEvents" class="link" href="#">Eventos</a>
-    <a id="showEventTypes" class="link" href="#">Tipos de Eventos</a>
+    <button id="showMembers">Membros</button>
+    <button id="showEvents">Eventos</button>
+    <button id="showEventTypes">Tipos de Eventos</button>
   </nav>
   <div id="members"></div>
   <div id="events"></div>
   <div id="eventTypes"></div>
-
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const sections = ["members", "events", "eventTypes"];
-      function hideAllSections() {
-        sections.forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.style.display = "none";
+      function hideAll() {
+        ["members", "events", "eventTypes"].forEach(id => {
+          document.getElementById(id).style.display = "none";
         });
       }
-      document.getElementById("showMembers").addEventListener("click", (e) => {
-        e.preventDefault();
-        hideAllSections();
+      hideAll();
+
+      document.getElementById("showMembers").addEventListener("click", () => {
+        hideAll();
         document.getElementById("members").style.display = "block";
         MenuMember.default.show();
       });
-      document.getElementById("showEvents").addEventListener("click", (e) => {
-        e.preventDefault();
-        hideAllSections();
+      document.getElementById("showEvents").addEventListener("click", () => {
+        hideAll();
         document.getElementById("events").style.display = "block";
         MenuEvent.default.show();
       });
-      document.getElementById("showEventTypes").addEventListener("click", (e) => {
-        e.preventDefault();
-        hideAllSections();
+      document.getElementById("showEventTypes").addEventListener("click", () => {
+        hideAll();
         document.getElementById("eventTypes").style.display = "block";
         MenuEventType.default.show();
       });
-      hideAllSections();
     });
   </script>
 </body>
