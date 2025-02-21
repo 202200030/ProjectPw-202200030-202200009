@@ -4,7 +4,7 @@
  * Classe que representa um Tipo de Evento.
  */
 let EventType = function EventType(description = "") {
-  this.id = 0; // Será definido pelo servidor
+  this.id = 0; 
   this.description = description;
 };
 
@@ -13,15 +13,13 @@ EventType.propertyLabels = {
   description: "Descrição"
 };
 
-/**
- * Classe para gerenciar os Tipos de Evento e sua interface.
- */
+
 function MenuEventType() {
   this.eventTypes = [];
   this.selectedEvent = null;
 }
 
-/** Cria a tabela HTML com os tipos de evento */
+
 MenuEventType.prototype.toTable = function () {
   let table = document.createElement("table");
   let thead = document.createElement("thead");
@@ -54,7 +52,7 @@ MenuEventType.prototype.toTable = function () {
   return table;
 };
 
-/** Carrega os tipos de evento do servidor */
+
 MenuEventType.prototype.loadFromServer = async function () {
   try {
     let response = await fetch("http://localhost:3000/eventTypes");
@@ -72,7 +70,7 @@ MenuEventType.prototype.loadFromServer = async function () {
   }
 };
 
-/** Cria o formulário para criar/editar um Tipo de Evento */
+
 MenuEventType.prototype.createForm = function (eventType = null) {
   let formContainer = document.createElement("div");
   let title = document.createElement("h3");
@@ -97,7 +95,7 @@ MenuEventType.prototype.createForm = function (eventType = null) {
       return;
     }
     if (eventType) {
-      // Atualiza (PUT)
+      //put aqui 
       try {
         let resp = await fetch(`http://localhost:3000/eventTypes/${eventType.id}`, {
           method: "PUT",
@@ -112,7 +110,7 @@ MenuEventType.prototype.createForm = function (eventType = null) {
         alert("Erro ao atualizar tipo de evento");
       }
     } else {
-      // Cria (POST)
+      //post aqui
       try {
         let resp = await fetch("http://localhost:3000/eventTypes", {
           method: "POST",
@@ -144,14 +142,14 @@ MenuEventType.prototype.createForm = function (eventType = null) {
   return formContainer;
 };
 
-/** Exibe o formulário de criação/edição */
+
 MenuEventType.prototype.showForm = function (eventType = null) {
   let container = document.getElementById("eventTypes");
   while (container.firstChild) container.removeChild(container.firstChild);
   container.appendChild(this.createForm(eventType));
 };
 
-/** Exibe a tela principal dos Tipos de Evento */
+
 MenuEventType.prototype.show = async function () {
   let container = document.getElementById("eventTypes");
   while (container.firstChild) container.removeChild(container.firstChild);

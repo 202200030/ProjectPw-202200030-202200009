@@ -4,8 +4,8 @@
  * Classe que representa um Evento.
  */
 let Event = function Event(type = "", description = "", date = "") {
-  this.id = 0;      // Definido pelo servidor
-  this.type = type; // Nome do tipo (convertido localmente)
+  this.id = 0;      
+  this.type = type; 
   this.description = description;
   this.date = date;
 };
@@ -22,7 +22,7 @@ function MenuEvent() {
   this.selectedEvent = null;
 }
 
-/** Desenha a tabela de eventos */
+
 MenuEvent.prototype.toTable = function () {
   let table = document.createElement("table");
   let thead = document.createElement("thead");
@@ -55,13 +55,12 @@ MenuEvent.prototype.toTable = function () {
   return table;
 };
 
-/** Carrega os eventos do servidor e converte typeId para typeName */
+
 MenuEvent.prototype.loadFromServer = async function () {
   try {
     let response = await fetch("http://localhost:3000/events");
     if (!response.ok) throw new Error("Erro ao carregar eventos");
     let data = await response.json();
-    // data contém objetos com { id, typeId, description, date }
     this.events = data.map((obj) => {
       let found = MenuEventType.default.eventTypes.find(et => et.id === obj.typeId);
       let typeName = found ? found.description : "(Tipo desconhecido)";
@@ -76,7 +75,7 @@ MenuEvent.prototype.loadFromServer = async function () {
   }
 };
 
-/** Cria o formulário para criar/editar um evento */
+
 MenuEvent.prototype.createForm = function (evt = null) {
   let formContainer = document.createElement("div");
   let title = document.createElement("h3");
@@ -88,7 +87,7 @@ MenuEvent.prototype.createForm = function (evt = null) {
   let typeSelect = document.createElement("select");
   MenuEventType.default.eventTypes.forEach((et) => {
     let opt = document.createElement("option");
-    opt.value = et.id; // Guardar o ID
+    opt.value = et.id; //guardar id aqui
     opt.textContent = et.description;
     typeSelect.appendChild(opt);
   });

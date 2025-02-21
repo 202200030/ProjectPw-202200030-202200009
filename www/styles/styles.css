@@ -31,7 +31,6 @@
     margin-bottom: var(--root-space);
   }
   
-  /* Estilização para os botões do menu */
   nav button {
     display: inline-block;
     padding: var(--root-half-space) var(--root-space);
@@ -129,7 +128,6 @@
     font-weight: bold;
   }
   
-  /* Responsividade */
   @media (max-width: 768px) {
     body {
       margin: var(--root-half-space);

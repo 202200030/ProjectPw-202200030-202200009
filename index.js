@@ -23,7 +23,7 @@ function handleError(res, error) {
   res.status(500).json({ message: "Erro interno no servidor" });
 }
 
-// eventTypes
+//eventTypes aqui
 app.get("/eventTypes", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM eventTypes");
@@ -98,7 +98,7 @@ app.delete("/eventTypes/:id", async (req, res) => {
   }
 });
 
-// events
+//events aqui
 app.get("/events", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM events");
@@ -188,7 +188,7 @@ app.delete("/events/:id", async (req, res) => {
   }
 });
 
-// members
+//members aqui 
 app.get("/members", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM members");
@@ -399,5 +399,5 @@ app.delete("/members/:id/events/:eventId", async (req, res) => {
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log("Servidor rodando na porta 3000");
+  console.log("Servidor a rodar na porta 3000");
 });

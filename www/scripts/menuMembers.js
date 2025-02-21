@@ -6,9 +6,7 @@
 let Member = function Member(name = "", preferredEventTypes = []) {
   this.id = 0;
   this.name = name;
-  // Armazena os IDs num array (números)
   this.preferredEventTypes = preferredEventTypes;
-  // Armazena os objetos de evento inscritos
   this.registeredEvents = [];
 };
 
@@ -24,7 +22,7 @@ function MenuMember() {
   this.selectedMember = null;
 }
 
-/** Desenha a tabela de membros */
+
 MenuMember.prototype.toTable = function () {
   let table = document.createElement("table");
   let thead = document.createElement("thead");
@@ -67,7 +65,7 @@ MenuMember.prototype.toTable = function () {
   return table;
 };
 
-/** Carrega os membros do servidor */
+
 MenuMember.prototype.loadFromServer = async function () {
   try {
     let response = await fetch("http://localhost:3000/members");
@@ -92,7 +90,7 @@ MenuMember.prototype.loadFromServer = async function () {
   }
 };
 
-/** Cria o formulário para criar/editar um membro */
+
 MenuMember.prototype.createForm = function (member = null) {
   let formContainer = document.createElement("form");
   let title = document.createElement("h3");
@@ -227,7 +225,6 @@ MenuMember.prototype.show = async function () {
   let container = document.getElementById("members");
   while (container.firstChild) container.removeChild(container.firstChild);
 
-  // Carrega eventTypes e events para fazer lookup
   await MenuEventType.default.loadFromServer();
   await MenuEvent.default.loadFromServer();
   await this.loadFromServer();
