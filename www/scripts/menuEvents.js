@@ -1,4 +1,6 @@
 "use strict";
+//202200030 202200030@estudantes.ips.pt
+//202200009 202200009@estudantes.ips.pt
 
 /**
  * Classe que representa um Evento.
