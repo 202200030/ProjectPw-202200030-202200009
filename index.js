@@ -13,7 +13,7 @@ app.use(cors());
 const pool = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "Fp_15848154", 
+  password: "", 
   database: "estsbike_db",
   waitForConnections: true,
   connectionLimit: 10,
